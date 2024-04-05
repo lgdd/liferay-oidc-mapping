@@ -1,0 +1,49 @@
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+name: Release
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        id: release
+        with:
+          release-type: simple
+  upload-release:
+    needs: release-please
+    if: needs.release-please.outputs.release_created
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-versions: [8, 11]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: lgdd/liferay-build-action@v1
+        with:
+          java-version: ${{ matrix.java-versions }}
+          profile: 'prod'
+          upload-bundle: false
+          upload-artifacts: true
+          retention-days: '1'
+      - uses: actions/download-artifact@v3
+        with:
+          name: artifacts
+      - name: Upload Release Artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for file in *.jar; do
+            mv "$file" "${file%.jar}-java${{ matrix.java-versions }}.jar"
+          done
+          gh release upload ${{ needs.release-please.outputs.tag_name }} $(ls *.jar)
