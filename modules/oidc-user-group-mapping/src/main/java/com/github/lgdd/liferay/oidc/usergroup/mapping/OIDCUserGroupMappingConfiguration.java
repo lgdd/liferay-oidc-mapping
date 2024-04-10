@@ -19,7 +19,7 @@ public interface OIDCUserGroupMappingConfiguration {
 
 
   @Meta.AD(
-      deflt = ID_TOKEN,
+      deflt = ACCESS_TOKEN,
       name = "com.github.lgdd.liferay.oidc.usergroup.mapping.token-to-parse",
       description = "com.github.lgdd.liferay.oidc.usergroup.mapping.token-to-parse-desc",
       optionLabels = {
