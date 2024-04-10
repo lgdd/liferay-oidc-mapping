@@ -10,7 +10,7 @@ import aQute.bnd.annotation.metatype.Meta;
 public interface OIDCUserGroupMappingConfiguration {
 
   @Meta.AD(
-      deflt = "true",
+      deflt = "false",
       required = false,
       name = "com.github.lgdd.liferay.oidc.usergroup.mapping.remove-user-groups",
       description = "com.github.lgdd.liferay.oidc.usergroup.mapping.remove-user-groups-desc"
